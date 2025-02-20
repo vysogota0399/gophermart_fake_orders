@@ -1,0 +1,28 @@
+x-app: &app
+  platform: linux/arm64
+  labels:
+    logging: "promtail"
+    logging_jobname: "containerlogs"
+  tty: true
+  stdin_open: true
+
+services:
+  gophermart-fake-orders:
+    <<: *app
+    container_name: gophermart-fake-orders
+    build:
+      context: ../
+      dockerfile: .docker/Dockerfile
+    environment:
+      - LOG_LEVEL=0
+      - DATABASE_DSN=postgres://postgres:secret@db:5432/gophermart_development
+      - ACCRUAL_CREATE_GOODS_URL=http://127.0.0.1:8080/api/goods
+      - GRPC_ADDRESS=0.0.0.0:8050
+      - HTTP_ADDRESS=0.0.0.0:8060
+    ports:
+      - 8060:8060
+      - 8050:8050
+
+networks:
+  default:
+    name: gophermart-network
