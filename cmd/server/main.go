@@ -8,7 +8,7 @@ import (
 	"github.com/vysogota0399/gophermart/internal/grpc_server/repositories"
 	"github.com/vysogota0399/gophermart/internal/logging"
 	"github.com/vysogota0399/gophermart/internal/storage"
-	services "github.com/vysogota0399/gophermart_protos/gen/services/denormalized_order"
+	"github.com/vysogota0399/gophermart_protos/gen/queries/order_details"
 	"go.uber.org/fx"
 )
 
@@ -22,7 +22,7 @@ func CreateApp() fx.Option {
 			logging.NewZapLogger,
 			storage.LCNewStorage,
 			grpc_server.NewServer,
-			fx.Annotate(handlers.NewOrderDetailsHandler, fx.As(new(services.DenormalizedOrderServiceServer))),
+			fx.Annotate(handlers.NewOrderDetailsHandler, fx.As(new(order_details.QueryOrderDetailsServer))),
 			fx.Annotate(repositories.NewProductsRepository, fx.As(new(handlers.ProductsRepository))),
 
 			api.NewHTTPServer,

@@ -5,14 +5,14 @@ import (
 	"net"
 
 	"github.com/vysogota0399/gophermart/internal/config"
-	services "github.com/vysogota0399/gophermart_protos/gen/services/denormalized_order"
+	"github.com/vysogota0399/gophermart_protos/gen/queries/order_details"
 
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	handler services.DenormalizedOrderServiceServer
+	handler order_details.QueryOrderDetailsServer
 	cfg     *config.Config
 	srv     *grpc.Server
 }
@@ -23,7 +23,7 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	services.RegisterDenormalizedOrderServiceServer(s.srv, s.handler)
+	order_details.RegisterQueryOrderDetailsServer(s.srv, s.handler)
 	go s.srv.Serve(lis)
 
 	return nil
@@ -33,7 +33,7 @@ func (s *Server) Stop() {
 	s.srv.GracefulStop()
 }
 
-func NewServer(h services.DenormalizedOrderServiceServer, lc fx.Lifecycle, cfg *config.Config) *Server {
+func NewServer(h order_details.QueryOrderDetailsServer, lc fx.Lifecycle, cfg *config.Config) *Server {
 	srv := &Server{cfg: cfg, srv: grpc.NewServer(), handler: h}
 
 	lc.Append(

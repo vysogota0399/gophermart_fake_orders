@@ -44,7 +44,7 @@ func LCNewStorage(lc fx.Lifecycle, cfg *config.Config) (*Storage, error) {
 					return err
 				}
 
-				return strg.RunMigration()
+				return nil
 			},
 			OnStop: func(ctx context.Context) error {
 				return strg.DB.Close()
@@ -58,12 +58,17 @@ func LCNewStorage(lc fx.Lifecycle, cfg *config.Config) (*Storage, error) {
 //go:embed migrations/*.sql
 var embedMigrations embed.FS
 
-func (s *Storage) RunMigration() error {
+func RunMigration(cfg *config.Config) error {
 	goose.SetBaseFS(embedMigrations)
+
+	db, err := sql.Open("pgx", cfg.DatabaseDSN)
+	if err != nil {
+		return err
+	}
 
 	if err := goose.SetDialect(string(goose.DialectPostgres)); err != nil {
 		return err
 	}
 
-	return goose.Up(s.DB, "migrations")
+	return goose.Up(db, "migrations")
 }
