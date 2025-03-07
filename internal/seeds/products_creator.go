@@ -114,7 +114,7 @@ func productsGenerator() chan *models.Product {
 		for i := 0; i < 100; i++ {
 			time.Sleep(time.Millisecond * 50)
 			out <- &models.Product{
-				Reward:     rand.Int64N(100),
+				Reward:     rand.Int64N(20),
 				Match:      gofakeit.Fruit(),
 				RewardType: "%",
 			}
